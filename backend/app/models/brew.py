@@ -3,7 +3,7 @@ from sqlalchemy.sql import func
 from app.database.database import Base
 
 class Brew(Base):
-    __ablename__ = "brew"
+    __tablename__ = "brew"
 
     id = Column(Integer, primary_key=True, nullable=False)
     roaster_name = Column(String(50), nullable=False)

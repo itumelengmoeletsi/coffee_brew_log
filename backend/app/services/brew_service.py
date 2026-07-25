@@ -26,11 +26,13 @@ def update_brew(db: Session, brew_id: int, brew_data: BrewUpdate):
     # First I fetch the brew
     brew = db.query(Brew).filter(Brew.id == brew_id).first()
 
+    # Check if that brew exists
     if not brew:
         raise ValueError("Brew not found")
 
-    update_data = brew_data.model_dump(exclude_unset=True)
+    update_data = brew_data.model_dump(exclude_unset=True) 
 
+    # update the brew and commit
     for key, value in update_data.items():
         setattr(brew, key, value)
 
@@ -43,3 +45,19 @@ def update_brew(db: Session, brew_id: int, brew_data: BrewUpdate):
     db.refresh(brew)
 
     return brew
+
+def delete_brew(db: Session, brew_id: int):
+    brew = db.query(Brew).filter(Brew.id == brew_id).first()
+
+    if not brew:
+        raise ValueError("Brew not found")
+
+    # Delete from sesssion and commit
+    db.delete(brew)
+    try: 
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+
+    return True

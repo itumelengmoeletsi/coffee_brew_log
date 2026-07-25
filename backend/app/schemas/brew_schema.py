@@ -28,7 +28,7 @@ class BrewUpdate(BaseModel):
 # Used when updating a job
 class BrewResponse(BrewBase):
     id: int
-    notes: str
+    notes: Optional[str] = None
     creation_timestamp: Optional[datetime] = None
 
     class Config:
