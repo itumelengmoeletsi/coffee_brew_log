@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations":[
+        {
+            "name": "Flutter (Android Emulator)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define=BASE_URL=http://10.0.2.2:8000/api"
+            ]
+        },
+        {
+            "name": "Flutter (Web/Desktop)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define=BASE_URL=http://localhost:8000/api"
+            ]
+        },
+        {
+            "name": "Flutter (Physical Phone)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define=BASE_URL=http://<YOUR_LOCAL_IP>:8000/api" //TODO: Add IP address should I ever test on mobile
+            ]
+        }
+    ],
+}
