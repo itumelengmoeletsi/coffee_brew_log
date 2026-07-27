@@ -21,7 +21,7 @@ class BrewCard extends StatelessWidget {
         child: Row(
           children: [
             // Rating in a circle 
-            const Icon(Icons.circle, size: 12, color: colors.blueGrey),
+            const Icon(Icons.circle, size: 12, color: Colors.blueGrey),
             const SizedBox(width: 8)
 
             // Name of brew
