@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/cubit/brew/brew_cubit.dart';
-
-var uuid = const Uuid(); //use this to generate new unique random IDs for brews
+import 'package:frontend/models/brew.dart';
 
 class BrewForm extends StatefulWidget {
-  const BrewForm({super.key});
+  final Brew? brew; // Null = Create mode | Not null = Edit mode
+
+  const BrewForm({
+    super.key,
+    this.brew,
+  });
+
 
   @override
   State<BrewForm> createState() => _BrewFormState();
@@ -14,7 +17,6 @@ class BrewForm extends StatefulWidget {
 
 class _BrewFormState extends State<BrewForm> {
   final _roasterController = TextEditingController();
-  final _brewMethodController = TextEditingController();
   final _coffeeWeightController = TextEditingController();
   final _waterWeightController = TextEditingController();
   final _grindSizeController = TextEditingController();
@@ -22,11 +24,37 @@ class _BrewFormState extends State<BrewForm> {
   final _notesController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  final List<String> _brewMethods = [
+    'V60',
+    'Aerospace',
+    'French Press',
+    'Espress',
+    'Chemex',
+    'Moka Pot',
+  ];
+  String? _selectedBrewMethod;
+
+  int _rating = 3; // Default rating
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.brew != null) {
+      final brew = widget.brew!;
+      _roasterController.text = brew.roasterName;
+      _selectedBrewMethod = brew.brewMethod;
+      _coffeeWeightController.text = brew.coffeeWeight.toString();
+      _waterWeightController.text = brew.waterWeight.toString();
+      _grindSizeController.text = brew.grindSize.toString();
+      _rating = brew.rating!;
+      _notesController.text = brew.notes!;
+    }
+  }
+
 
   @override
   void dispose() {
     _roasterController.dispose();
-    _brewMethodController.dispose();
     _coffeeWeightController.dispose();
     _waterWeightController.dispose();
     _grindSizeController.dispose();
@@ -40,27 +68,41 @@ class _BrewFormState extends State<BrewForm> {
       // building the payload to match the fastapi structure
       final brewData = {
         'roaster': _roasterController.text.trim(),
-        'brew_method': _brewMethodController.text.trim(),
+        'brew_method': _selectedBrewMethod ?? '', // uses selected dropdown value
         'coffee_weight': double.tryParse(_coffeeWeightController.text) ?? 0.0,
         'water_weight': double.tryParse(_waterWeightController.text) ?? 0.0,
         'grind_size': int.tryParse(_grindSizeController.text) ?? 0,
-        'rating': int.tryParse(_ratingController.text) ?? 0,
+        'rating': _rating, // Uses counter state integer
         'notes': _notesController.text.trim(),
       };
 
-      // send to the BrewCubit
-      context.read<BrewCubit>().addBrew(brewData);
+      if (widget.brew == null) {
+        // Create Mode
+        context.read().addBrew(brewData);
+      } else {
+        // Edit Mode
+        context.read().updateBrew(widget.brew!.id, brewData);
+      }
 
       // close the form 
       Navigator.of(context).pop();
     }
   }
 
+  void _deleteBrew() {
+    if (widget.brew != null) {
+      context.read().deleteBrew(widget.brew!.id);
+      Navigator.of(context).pop();
+    }
+  }
+
+  bool get isEditing => widget.brew != null;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New Brew'),
+        title: Text(isEditing ? 'Edit Brew' : 'Add New Brew'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -83,57 +125,89 @@ class _BrewFormState extends State<BrewForm> {
                 const SizedBox(height: 12),
 
                 // Method 
-                //TODo: This seems like it has to be a drop down menu for the user to select from an existing list of options
-                //TODO: Change this in the FastAPI code as well
-                TextFormField(
-                  controller: _brewMethodController,
+                DropdownButtonFormField<String>(
+                  value: _selectedBrewMethod,
                   decoration: const InputDecoration(
-                    labelText:'Method',
+                    labelText: 'Brew Method',
                     icon: Icon(Icons.coffee_maker),
                   ),
+                  items: _brewMethods.map((method) {
+                    return DropdownMenuItem(
+                      value: method,
+                      child: Text(method), 
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedBrewMethod = value;
+                    });
+                  },
                   validator: (value) =>
-                  value == null || value.isEmpty ? 'Select a method' : null,
+                      value == null || value.isEmpty ? 'Select a brew method' : null,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 12), 
 
                 // water and coffee weight
                 Row(
                   children: [
-                    TextFormField(
-                      controller: _coffeeWeightController,
-                      decoration: const InputDecoration(
-                        labelText: 'Coffer (grams)',
-                        icon: Icon(Icons.scale),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _coffeeWeightController,
+                        decoration: const InputDecoration(
+                          labelText: 'Coffer (g)',
+                          icon: Icon(Icons.scale),
+                        ),
+                        validator: (value) =>
+                              value == null || value.isEmpty ? '0' : null,
                       ),
-                      validator: (value) =>
-                            value == null || value.isEmpty ? '0' : null,
                     ),
                     const SizedBox(width: 8),
 
                     // water weight
-                    TextFormField(
-                      controller: _waterWeightController,
-                      decoration: const InputDecoration(
-                        labelText: 'Water',
-                        icon: Icon(Icons.water),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _waterWeightController,
+                        decoration: const InputDecoration(
+                          labelText: 'Water (g)',
+                          icon: Icon(Icons.water),
+                        ),
+                        validator: (value) =>
+                              value == null || value.isEmpty ? '0' : null,
                       ),
-                      validator: (value) =>
-                            value == null || value.isEmpty ? '0' : null,
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
 
                 //rating
-                //TODO: Make this a selector type thing where the user clicks on a button with a counter type thing
                 TextFormField(
-                  controller: _ratingController,
-                  decoration: const InputDecoration(
-                    labelText: 'Raing: 1-5',
-                    icon: Icon(Icons.star),
+                  key: ValueKey(_rating), // Ensure field updates when state changes
+                  readOnly: true, // to prevent the keyboard from popping up
+                  initialValue: '$_rating / 5',
+                  decoration: InputDecoration(
+                    labelText: 'Rating',
+                    icon: const Icon(Icons.star),
+                    prefixIcon: IconButton(
+                      icon: const Icon(Icons.remove_circle_outline),
+                      onPressed: _rating > 1
+                          ? () {
+                            setState(() {
+                              _rating--;
+                            });
+                          }
+                        : null, // Disabled at 1
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.add_circle_outline),
+                      onPressed: _rating < 5
+                          ? () {
+                            setState(() {
+                              _rating++;
+                            });
+                          }
+                        : null, // Disabled at 5  
+                    ),
                   ),
-                  validator: (value) =>
-                        value == null || value.isEmpty ? 'Rate out of 5' : null,
                 ),
                 const SizedBox(height: 12),
 
@@ -149,11 +223,32 @@ class _BrewFormState extends State<BrewForm> {
                 ),
                 const SizedBox(height: 24),
 
-                // Save button
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  child: const Text('Save Brew')
-                )
+                // Dynamic Action Buttons
+                if (isEditing)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _deleteBrew,
+                          icon: const Icon(Icons.delete, color: Colors.red,),
+                          label: const Text('Delete', style: TextStyle(color: Colors.red)),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _submitForm,
+                          child: const Text('Update Brew'),
+                        ),
+                      ),
+                    ],
+                  )
+                else 
+                  // Save button
+                  ElevatedButton(
+                    onPressed: _submitForm,
+                    child: const Text('Save Brew')
+                  ),
               ],
             ),
           )
