@@ -4,7 +4,7 @@ import '../models/brew.dart';
 
 class ApiService {
   // Use 10.0.2.2 for Android Emulator, localhost for Windows/Web app
-  static const String baseUrl = 'http://localhost:8000';
+  static const String baseUrl = 'http://localhost:8000/api/brews';
 
   // GET api/brews/
   Future<List<Brew>> fetchBrews() async {
@@ -30,6 +30,21 @@ class ApiService {
       return Brew.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to create brew');
+    }
+  }
+
+  // PATCH /api/brews/{id}
+  Future<Brew> updateBrew(int id, Map<String, dynamic> brewData) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/$id'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(brewData),
+    );
+
+    if (response.statusCode == 200) {
+      return Brew.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to update brew');
     }
   }
 

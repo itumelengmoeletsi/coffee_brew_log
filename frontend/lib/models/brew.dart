@@ -5,7 +5,6 @@ class Brew {
   final double coffeeWeight;
   final double waterWeight;
   final int? rating;
-  final String? grindSize;
   final String? notes;
 
   Brew({
@@ -15,7 +14,6 @@ class Brew {
     required this.coffeeWeight,
     required this.waterWeight,
     this.rating,
-    this.grindSize,
     this.notes
   });
 
@@ -28,7 +26,6 @@ class Brew {
       coffeeWeight: (json['coffee_weight'] as num).toDouble(),
       waterWeight: (json['coffee_weight'] as num).toDouble(),
       rating: json['rating'],
-      grindSize: json['grind_size'],
       notes: json['notes'],
     );
   }
@@ -41,7 +38,6 @@ class Brew {
       'coffee_weight': coffeeWeight,
       'water_weight': waterWeight,
       'rating': rating,
-      'grind_size': grindSize,
       'notes': notes,
     };
   }

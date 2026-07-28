@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/cubit/brew/brew_cubit.dart';
 import 'package:frontend/models/brew.dart';
 
 class BrewForm extends StatefulWidget {
@@ -19,7 +20,6 @@ class _BrewFormState extends State<BrewForm> {
   final _roasterController = TextEditingController();
   final _coffeeWeightController = TextEditingController();
   final _waterWeightController = TextEditingController();
-  final _grindSizeController = TextEditingController();
   final _ratingController = TextEditingController();
   final _notesController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -45,9 +45,8 @@ class _BrewFormState extends State<BrewForm> {
       _selectedBrewMethod = brew.brewMethod;
       _coffeeWeightController.text = brew.coffeeWeight.toString();
       _waterWeightController.text = brew.waterWeight.toString();
-      _grindSizeController.text = brew.grindSize.toString();
-      _rating = brew.rating!;
-      _notesController.text = brew.notes!;
+      _rating = brew.rating ?? 3;
+      _notesController.text = brew.notes ?? '';
     }
   }
 
@@ -57,7 +56,6 @@ class _BrewFormState extends State<BrewForm> {
     _roasterController.dispose();
     _coffeeWeightController.dispose();
     _waterWeightController.dispose();
-    _grindSizeController.dispose();
     _ratingController.dispose();
     _notesController.dispose();
     super.dispose();
@@ -71,17 +69,16 @@ class _BrewFormState extends State<BrewForm> {
         'brew_method': _selectedBrewMethod ?? '', // uses selected dropdown value
         'coffee_weight': double.tryParse(_coffeeWeightController.text) ?? 0.0,
         'water_weight': double.tryParse(_waterWeightController.text) ?? 0.0,
-        'grind_size': int.tryParse(_grindSizeController.text) ?? 0,
         'rating': _rating, // Uses counter state integer
         'notes': _notesController.text.trim(),
       };
 
       if (widget.brew == null) {
         // Create Mode
-        context.read().addBrew(brewData);
+        context.read<BrewCubit>().addBrew(brewData);
       } else {
         // Edit Mode
-        context.read().updateBrew(widget.brew!.id, brewData);
+        context.read<BrewCubit>().updateBrew(widget.brew!.id, brewData);
       }
 
       // close the form 
@@ -91,7 +88,7 @@ class _BrewFormState extends State<BrewForm> {
 
   void _deleteBrew() {
     if (widget.brew != null) {
-      context.read().deleteBrew(widget.brew!.id);
+      context.read<BrewCubit>().deleteBrew(widget.brew!.id);
       Navigator.of(context).pop();
     }
   }

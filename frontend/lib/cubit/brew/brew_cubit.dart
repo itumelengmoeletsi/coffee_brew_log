@@ -30,6 +30,17 @@ class BrewCubit extends Cubit<BrewState> {
     }
   }
 
+  // Update an existing brew
+  Future<void> updateBrew(int id, Map<String, dynamic> brewData) async {
+    emit(BrewLoading());
+    try {
+      await apiService.updateBrew(id, brewData);
+      await loadBrews();
+    } catch (e) {
+      emit(BrewError('Failed to update brew: ${e.toString()}'));
+    }
+  } 
+
   // Delete a brew record and refresh the list
   Future<void> deleteBrew(int id) async {
     emit(BrewLoading());
