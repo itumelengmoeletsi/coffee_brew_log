@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.database import engine, Base
+import app.models
+import os
 
 # Import routes
 from app.api.routes import brew_routes
@@ -9,6 +11,11 @@ app = FastAPI(
         title="Coffee Brew Log API", 
         version = "1.0.0"
     )
+
+database_url = os.getenv("DATABASE_URL")
+
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
 
 # Create Tables
 Base.metadata.create_all(bind=engine)
