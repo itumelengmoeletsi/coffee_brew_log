@@ -130,7 +130,7 @@ ALLOWED_ORIGINS="http://localhost:3000,https://coffee-brew-backend-ktmt.onrender
 # Production API Base URL
 BASE_URL=https://coffee-brew-backend-ktmt.onrender.com
 
-6. Project Directory Structure
+6. Minimum Project Directory Structure
 coffee_brew_log/
 ├── .gitignore
 ├── README.md
@@ -144,15 +144,17 @@ coffee_brew_log/
 │   ├── requirements.txt
 │   └── app/
 │       ├── main.py                # FastAPI entry point & CORS configuration
-│       ├── core/
-│       │   ├── config.py          # Environment settings loader
+│       ├── database
 │       │   └── database.py        # SQLAlchemy engine & session setup
 │       ├── models/
 │       │   └── brew.py            # SQLAlchemy database ORM model
 │       ├── schemas/
-│       │   └── brew.py            # Pydantic schemas for request/response validation
+│       │   └── brew_schema.py            # Pydantic schemas for request/response validation
 │       └── api/
-│           └── brews.py           # REST route handlers
+│           └── brew_service.py           # REST route handlers
+|       └── Dockerfile
+|       └── .dockerignore
+|       └── requirements.txt
 │
 └── frontend/
     ├── Dockerfile
