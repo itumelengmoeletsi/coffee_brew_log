@@ -1,14 +1,16 @@
 // lib/services/api_service.dart
 
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../models/brew.dart';
 
 class ApiService {
   // Reads the live Render URL from the .env file
   // Fallback string added in case the key isn't found
-  final String baseUrl = dotenv.env['BASE_URL'] ?? 'https://coffee-brew-backend-ktmt.onrender.com';
+  static const String baseUrl = String.fromEnvironment(
+    'BASE_URL',
+    defaultValue: 'https://coffee-brew-backend-ktmt.onrender.com',
+  );
 
   // GET /api/brews/
   Future<List<Brew>> fetchBrews({String? brewMethod}) async {
