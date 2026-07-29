@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -9,7 +9,8 @@ class BrewBase(BaseModel):
     brew_method: str = Field(..., max_length=255)
     coffee_weight: int 
     water_weight: int
-    grind_size: int
+    rating: int
+    notes: Optional[str] = Field(default=None, max_length=255)
 
 class BrewCreate(BrewBase):
     pass
@@ -21,15 +22,14 @@ class BrewUpdate(BaseModel):
     brew_method: Optional[str] = Field(default=None, max_length=255)
     coffee_weight: Optional[int] = None
     water_weight: Optional[int] = None
-    grind_size: Optional[int] = None
+    rating: Optional[int] = None
     notes: Optional[str] = Field(default=None, max_length=255) 
 
 # Response Schema
 # Used when updating a job
 class BrewResponse(BrewBase):
     id: int
-    notes: Optional[str] = None
     creation_timestamp: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True # this allows sqlalchemy models to be converted into API responses
+    # Pydantic v2 syntax (replaces class Config: from_attributes = True)
+    model_config = ConfigDict(from_attributes=True)

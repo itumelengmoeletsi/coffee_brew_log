@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from app.database.database import get_db
 from app.schemas.brew_schema import (BrewCreate, BrewUpdate, BrewResponse)
@@ -14,12 +14,19 @@ router = APIRouter(
 
 @router.get("/", response_model=List[BrewResponse])
 def read_brews(
+    brew_method: Optional[str] = Query(default=None, description="Filter by brew method"),
     db: Session = Depends(get_db)
 ):
     """
     Display the list of all existing brews
     """
-    return db.query(Brew).all()
+    query = db.query(Brew)
+
+    if brew_method: 
+        query = query.filter(Brew.brew_method.ilike(f"%{brew_method}"))
+
+    brews = query.all()
+    return brews
 
 @router.get("/{id}", response_model=BrewResponse)
 def read_brew_by_id(

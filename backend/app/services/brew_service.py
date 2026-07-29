@@ -8,7 +8,7 @@ def create_brew(db: Session, brew_data: BrewCreate):
         brew_method=brew_data.brew_method,
         coffee_weight=brew_data.coffee_weight,
         water_weight=brew_data.water_weight,
-        grind_size=brew_data.grind_size
+        rating=brew_data.rating,
     )
 
     # Save to database
