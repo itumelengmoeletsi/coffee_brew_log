@@ -26,9 +26,11 @@ class _BrewFormState extends State<BrewForm> {
 
   final List<String> _brewMethods = [
     'V60',
-    'Aerospace',
+    'AeroPress',
+    'Drip Coffee',
     'French Press',
-    'Espress',
+    'Espresso',
+    'French Press',
     'Chemex',
     'Moka Pot',
   ];
@@ -45,7 +47,7 @@ class _BrewFormState extends State<BrewForm> {
       _selectedBrewMethod = brew.brewMethod;
       _coffeeWeightController.text = brew.coffeeWeight.toString();
       _waterWeightController.text = brew.waterWeight.toString();
-      _rating = brew.rating ?? 3;
+      _rating = brew.rating;
       _notesController.text = brew.notes ?? '';
     }
   }
@@ -65,10 +67,10 @@ class _BrewFormState extends State<BrewForm> {
     if (_formKey.currentState!.validate()) {
       // building the payload to match the fastapi structure
       final brewData = {
-        'roaster': _roasterController.text.trim(),
-        'brew_method': _selectedBrewMethod ?? '', // uses selected dropdown value
-        'coffee_weight': double.tryParse(_coffeeWeightController.text) ?? 0.0,
-        'water_weight': double.tryParse(_waterWeightController.text) ?? 0.0,
+        'roaster_name': _roasterController.text.trim(),
+        'brew_method': _selectedBrewMethod, // uses selected dropdown value
+        'coffee_weight': int.parse(_coffeeWeightController.text.trim()),
+        'water_weight': int.parse(_waterWeightController.text.trim()),
         'rating': _rating, // Uses counter state integer
         'notes': _notesController.text.trim(),
       };
@@ -150,12 +152,20 @@ class _BrewFormState extends State<BrewForm> {
                     Expanded(
                       child: TextFormField(
                         controller: _coffeeWeightController,
+                        keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
-                          labelText: 'Coffer (g)',
+                          labelText: 'Coffee (g)',
                           icon: Icon(Icons.scale),
                         ),
-                        validator: (value) =>
-                              value == null || value.isEmpty ? '0' : null,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Enter weight';
+                          }
+                          if (int.tryParse(value.trim()) == null) {
+                            return 'Enter valid number';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -164,12 +174,20 @@ class _BrewFormState extends State<BrewForm> {
                     Expanded(
                       child: TextFormField(
                         controller: _waterWeightController,
+                        keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           labelText: 'Water (g)',
                           icon: Icon(Icons.water),
                         ),
-                        validator: (value) =>
-                              value == null || value.isEmpty ? '0' : null,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Enter weight';
+                          }
+                          if (int.tryParse(value.trim()) == null) {
+                            return 'Enter valid number';
+                          }
+                          return null;
+                        }
                       ),
                     ),
                   ],
@@ -254,4 +272,3 @@ class _BrewFormState extends State<BrewForm> {
     );
   }
 }
-

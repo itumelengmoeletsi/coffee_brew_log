@@ -2,9 +2,9 @@ class Brew {
   final int id;
   final String roasterName;
   final String brewMethod;
-  final double coffeeWeight;
-  final double waterWeight;
-  final int? rating;
+  final int coffeeWeight;
+  final int waterWeight;
+  final int rating;
   final String? notes;
 
   Brew({
@@ -13,20 +13,20 @@ class Brew {
     required this.brewMethod,
     required this.coffeeWeight,
     required this.waterWeight,
-    this.rating,
+    required this.rating,
     this.notes
   });
 
   // Convert JSON from FastAPI into a Flutter Brew object
   factory Brew.fromJson(Map<String, dynamic> json) {
     return Brew(
-      id: json['id'],
-      roasterName: json['roaster_name'],
-      brewMethod: json['brew_method'],
-      coffeeWeight: (json['coffee_weight'] as num).toDouble(),
-      waterWeight: (json['coffee_weight'] as num).toDouble(),
-      rating: json['rating'],
-      notes: json['notes'],
+      id: json['id'] as int? ?? 0,
+      roasterName: json['roaster_name'] as String? ?? '',
+      brewMethod: json['brew_method'] as String? ?? '',
+      coffeeWeight: json['coffee_weight'] as int? ?? 0,
+      waterWeight: json['water_weight'] as int? ?? 0,
+      rating: json['rating'] as int? ?? 0,
+      notes: json['notes'] as String?,
     );
   }
 

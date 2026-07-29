@@ -1,75 +1,111 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static Color primaryColor = const Color.fromRGBO(255, 255, 255, 1);
-  static Color primaryAccent = const Color.fromRGBO(196, 178, 172, 1);
-  static Color secondaryColor = const Color.fromRGBO(45, 45, 45, 1);
-  static Color secondaryAccent = const Color.fromRGBO(35, 35, 35, 1);
-  static Color textColor = const Color.fromRGBO(150, 150, 150, 1);
-  static Color rating1 = const Color.fromRGBO(255, 0, 0, 1);
-  static Color rating2 = const Color.fromRGBO(255, 75, 75, 1);
-  static Color rating3 = const Color.fromRGBO(255, 125, 0, 1);
-  static Color rating4 = const Color.fromRGBO(0, 200, 150, 1);
-  static Color rating5 = const Color.fromRGBO(0, 255, 0, 1);
+  static const Color scaffoldBackground = Color(0xFF1E1E1E);
+  static const Color cardSurface = Color(0xFF2C2C2C);
+  static const Color appBarBackground = Color(0xFF121212);
+
+  static const Color primaryAccent = Color(0xFFD7CCC8);
+  static const Color secondaryAccent = Color(0xFFB0BEC5);
+
+  static const Color textPrimary = Color(0xFFF5F5F5);
+  static const Color textSecondary = Color(0xFF8D6E63);
+
+  static const Color rating1 = Color(0xFFEF5350);
+  static const Color rating2 = Color(0xFFFF7043);
+  static const Color rating3 = Color(0xFFFFB74D);
+  static const Color rating4 = Color(0xFF66BB6A);
+  static const Color rating5 = Color(0xFF26A69A);
 }
 
 ThemeData primaryTheme = ThemeData(
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: AppColors.primaryColor
+  useMaterial3: true,
+  colorScheme: ColorScheme.dark(
+    primary: AppColors.primaryAccent,
+    secondary: AppColors.secondaryAccent,
+    surface: AppColors.cardSurface,
+    background: AppColors.scaffoldBackground,
+    onPrimary: Colors.black,
+    onSecondary: Colors.white,
+    onSurface: AppColors.textPrimary,
   ),
 
   // scaffold color
-  scaffoldBackgroundColor: AppColors.secondaryAccent,
+  scaffoldBackgroundColor: AppColors.scaffoldBackground,
 
   // app bar theme colors
   appBarTheme: AppBarTheme(
-    backgroundColor: AppColors.secondaryColor,
-    foregroundColor: AppColors.textColor,
+    backgroundColor: AppColors.appBarBackground,
+    foregroundColor: AppColors.textPrimary,
     surfaceTintColor: Colors.transparent,
     centerTitle: true,
+    elevation: 0,
   ),
 
-  textTheme: TextTheme(
+    textTheme: TextTheme(
     bodyMedium: TextStyle(
-      color: AppColors.textColor,
+      color: AppColors.textPrimary,
       fontSize: 16,
-      letterSpacing: 1,
+      letterSpacing: 0.5,
     ),
     headlineMedium: TextStyle(
-      color: AppColors.textColor,
-      fontSize: 16,
+      color: AppColors.textPrimary,
+      fontSize: 18,
       fontWeight: FontWeight.bold,
-      letterSpacing: 1,
+      letterSpacing: 0.5,
     ),
     titleMedium: TextStyle(
-      color: AppColors.textColor,
+      color: AppColors.textPrimary,
       fontSize: 16,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 1,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.5,
     ),
   ),
 
   // Card Theme
   cardTheme: CardThemeData(
-    color: AppColors.secondaryColor.withOpacity(0.5),
+    color: AppColors.cardSurface,
     surfaceTintColor: Colors.transparent,
-    shadowColor: Colors.transparent,
-    shape: const RoundedRectangleBorder(),
+    shadowColor: Colors.black45,
+    elevation: 2,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+      side: BorderSide(color: Colors.white.withOpacity(0.08)),
+    ),
     margin: const EdgeInsets.only(bottom: 16)
   ),
 
   // Input decoration theme
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: AppColors.secondaryColor.withOpacity(0.5),
-    border: InputBorder.none,
-    labelStyle: TextStyle(color: AppColors.textColor),
-    prefixIconColor: AppColors.textColor,
+    fillColor: AppColors.cardSurface,
+    hintStyle: const TextStyle(color: AppColors.textSecondary),
+    labelStyle: const TextStyle(color: AppColors.textSecondary),
+    prefixIconColor: AppColors.primaryAccent,
+    suffixIconColor: AppColors.primaryAccent,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: AppColors.primaryAccent, width: 1.5),
+    ),
   ),
 
   // dialog theme
-  dialogTheme: DialogThemeData(
-    backgroundColor: AppColors.secondaryAccent,
+  dialogTheme: const DialogThemeData(
+    backgroundColor: AppColors.cardSurface,
     surfaceTintColor: Colors.transparent,
+    titleTextStyle: TextStyle(
+      color: AppColors.textPrimary,
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+    ),
+    contentTextStyle: TextStyle(
+      color: AppColors.textPrimary,
+      fontSize: 15,
+    ),
   ),
 );
+

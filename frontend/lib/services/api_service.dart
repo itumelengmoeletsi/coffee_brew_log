@@ -7,8 +7,11 @@ class ApiService {
   static const String baseUrl = 'http://localhost:8000/api/brews';
 
   // GET api/brews/
-  Future<List<Brew>> fetchBrews() async {
-    final response = await http.get(Uri.parse('$baseUrl/'));
+  Future<List<Brew>> fetchBrews({String? brewMethod}) async {
+    final Uri uri = Uri.http('localhost:8000', '/api/brews/', {
+      if (brewMethod != null && brewMethod.isNotEmpty) 'brew_method': brewMethod,
+    });
+    final response = await http.get(uri);
 
     if (response.statusCode == 200) {
       final List<dynamic> body = jsonDecode(response.body);
@@ -36,7 +39,7 @@ class ApiService {
   // PATCH /api/brews/{id}
   Future<Brew> updateBrew(int id, Map<String, dynamic> brewData) async {
     final response = await http.patch(
-      Uri.parse('$baseUrl/$id'),
+      Uri.parse('$baseUrl/$id/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(brewData),
     );

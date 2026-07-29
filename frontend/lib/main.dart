@@ -16,7 +16,7 @@ class CoffeeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => BrewCubit(apiService: ApiService())..loadBrews(),
+      create: (context) => BrewCubit(apiService: ApiService()),
       child: MaterialApp(
         title: 'Coffee Brew Log',
         debugShowCheckedModeBanner: false,

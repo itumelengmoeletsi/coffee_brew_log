@@ -35,7 +35,7 @@ class BrewCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.textColor.withOpacity(0.4)),
+        border: Border.all(color: AppColors.textSecondary.withOpacity(0.4)),
       ),
       child: child,
     );
@@ -55,8 +55,8 @@ class BrewCard extends StatelessWidget {
                 height: 44,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: _getRatingColor(brew.rating!),
-                  border: Border.all(color: Colors.black, width: 2),
+                  color: _getRatingColor(brew.rating),
+                  border: Border.all(color: Colors.black12, width: 2),
                 ),
                 child: Center(
                   child: Text(
@@ -80,7 +80,7 @@ class BrewCard extends StatelessWidget {
                     Text(
                       brew.roasterName,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 18,
                       ),
                       maxLines: 1,
@@ -98,7 +98,7 @@ class BrewCard extends StatelessWidget {
                           child: Text(
                             brew.brewMethod,
                             style: TextStyle(
-                              color: AppColors.textColor,
+                              color: AppColors.textSecondary,
                               fontSize: 12, 
                             ),
                           ),
@@ -112,12 +112,13 @@ class BrewCard extends StatelessWidget {
                               Icon(
                                 Icons.coffee,
                                 size: 12,
+                                color: AppColors.primaryAccent,
                               ),
                               const SizedBox(width: 2),
                               Text(
                                 '${brew.coffeeWeight.toInt()}',
                                 style: TextStyle(
-                                  color: AppColors.textColor, 
+                                  color: AppColors.textSecondary, 
                                   fontSize: 12,
                                 ),
                               ),
@@ -139,7 +140,7 @@ class BrewCard extends StatelessWidget {
                               Text(
                                 '${brew.waterWeight.toInt()}',
                                 style: TextStyle(
-                                  color: AppColors.textColor,
+                                  color: AppColors.textSecondary,
                                   fontSize: 12,
                                 ),
                               )
@@ -156,7 +157,7 @@ class BrewCard extends StatelessWidget {
               // edit pencil icon
               IconButton(
                 icon: const Icon(Icons.edit_note_rounded, size: 28),
-                color: AppColors.textColor,
+                color: AppColors.primaryAccent,
                 onPressed: onEdit,
               )
             ],

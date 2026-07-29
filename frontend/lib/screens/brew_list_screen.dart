@@ -19,11 +19,19 @@ class _BrewListScreenState extends State<BrewListScreen> {
   final List<String> _methodOptions = [
     'ALL',
     'V60',
-    'Aeropress',
-    'Drip coffee',
+    'AeroPress',
+    'Drip Coffee',
     'Espresso',
     'French Press',
+    'Chemex',
+    'Moka Pot'
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<BrewCubit>().loadBrews();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,20 +50,23 @@ class _BrewListScreenState extends State<BrewListScreen> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => const BrewForm(),
+                          builder: (_) =>BlocProvider.value(
+                            value: context.read<BrewCubit>(),
+                            child: const BrewForm(),
+                          ),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.primaryAccent,
+                      foregroundColor: Colors.black,
                       shape: const StadiumBorder(),
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
@@ -75,22 +86,23 @@ class _BrewListScreenState extends State<BrewListScreen> {
               // filter dropdown
               DropdownButtonFormField<String>(
                 value: _selectedMethod,
-                dropdownColor: AppColors.secondaryColor,
-                style: TextStyle(color: AppColors.textColor, fontSize: 16),
+                dropdownColor: AppColors.cardSurface,
+                iconEnabledColor: AppColors.primaryAccent,
+                style: TextStyle(color: AppColors.textPrimary, fontSize: 16),
                 decoration: InputDecoration(
                   hintText: 'Filter by method',
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   filled: true,
-                  fillColor: AppColors.secondaryColor.withOpacity(0.5),
+                  fillColor: AppColors.cardSurface,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide(
-                      color: AppColors.textColor.withOpacity(0.3),
+                      color: AppColors.textSecondary.withOpacity(0.3),
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide(color: AppColors.textColor),
+                    borderSide: BorderSide(color: AppColors.primaryAccent),
                   ),
                 ),
                 items: _methodOptions.map((String method) {
@@ -127,7 +139,7 @@ class _BrewListScreenState extends State<BrewListScreen> {
                           children: [
                             Text(
                               'Failed to load brews',
-                              style: TextStyle(color: AppColors.textColor),
+                              style: TextStyle(color: AppColors.textPrimary),
                             ),
                             const SizedBox(height: 8),
                             ElevatedButton(
@@ -145,16 +157,19 @@ class _BrewListScreenState extends State<BrewListScreen> {
                       final filteredBrews = _selectedMethod == 'ALL'
                           ? state.brews
                           : state.brews
-                              .where((brew) =>
-                                  brew.brewMethod.toLowerCase() ==
-                                  _selectedMethod.toLowerCase())
-                              .toList();
+                              .where((brew) {
+                                final methodInDb = brew.brewMethod.toLowerCase().trim();
+                                final selectedFilter = _selectedMethod.toLowerCase().trim();
+
+                                return methodInDb.contains(selectedFilter) ||
+                                        selectedFilter.contains(methodInDb);
+                              }).toList();
 
                       if (filteredBrews.isEmpty) {
                         return Center(
                           child: Text(
-                            'No brews found',
-                            style: TextStyle(color: AppColors.textColor),
+                            'No brews found for $_selectedMethod',
+                            style: TextStyle(color: AppColors.textPrimary),
                           )
                         );
                       }
@@ -164,6 +179,7 @@ class _BrewListScreenState extends State<BrewListScreen> {
                           await context.read<BrewCubit>().loadBrews();
                         },
                         child: ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(), // ensures pull to refresh alwasy works
                           itemCount: filteredBrews.length,
                           itemBuilder: (context, index) {
                             final brew = filteredBrews[index];
@@ -172,9 +188,11 @@ class _BrewListScreenState extends State<BrewListScreen> {
                               onEdit: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => 
-                                        BrewForm(brew: brew),
-                                  )
+                                    builder: (_) => BlocProvider.value(
+                                      value: context.read<BrewCubit>(),
+                                      child: BrewForm(brew: brew),
+                                    ),
+                                  ),
                                 );
                               },
                             );

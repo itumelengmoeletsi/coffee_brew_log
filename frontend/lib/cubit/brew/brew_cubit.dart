@@ -14,7 +14,9 @@ class BrewCubit extends Cubit<BrewState> {
     try {
       final brews = await apiService.fetchBrews();
       emit(BrewLoaded(brews));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('Error loading brews: $e');
+      print('Stack trace: $stackTrace');
       emit(BrewError(e.toString()));
     }
   }
