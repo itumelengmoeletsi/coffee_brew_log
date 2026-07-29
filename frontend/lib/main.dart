@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/config/theme.dart';
 import 'package:frontend/cubit/brew/brew_cubit.dart';
@@ -6,7 +7,11 @@ import 'package:frontend/cubit/brew/brew_state.dart';
 import 'package:frontend/screens/brew_list_screen.dart';
 import 'package:frontend/services/api_service.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
+
   runApp(const CoffeeApp());
 }
 
